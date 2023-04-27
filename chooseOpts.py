@@ -2,6 +2,7 @@
 
 import sys
 import os
+import subprocess
 
 
 def _help():
@@ -35,7 +36,13 @@ def _start():
     """
     Start the server.
     """
-    os.system('docker-compose up -d')
+    if not (subprocess.check_output('docker container inspect minecraft  -f \'{{.State.Running}}\'')
+                .strip()
+                .decode()
+                .replace('\'', '') == 'true'):
+        os.system('docker-compose up -d')
+    else:
+        print('Server already running.')
 
 
 def _quit():
@@ -103,7 +110,7 @@ def _load_properties(file_path, sep='=', comment_char='#') -> dict:
 def main():
     n = len(sys.argv)
     if n == 1:
-        os.system('docker-compose up -d')
+        _start()
     elif n == 2:
         _switch(sys.argv[1])()
 

@@ -32,6 +32,8 @@ RUN chmod +x startServ.sh
 
 ENTRYPOINT ["./startServ.sh"]
 
+CMD ["-x", "1024M", "-m", "512M"]
+
  
 
 
