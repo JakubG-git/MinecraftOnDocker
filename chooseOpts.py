@@ -2,9 +2,13 @@
 
 import sys
 import subprocess
-
+from os import path
 
 def _help():
+    """
+    Show help message.
+    """
+
     print("""Usage: python chooseOpts.py [options]
     Options:
         -h, --help: Show this help message.
@@ -16,6 +20,20 @@ def _help():
 
 
 def _switch(option: str):
+    """
+    Switcher function to call the correct function based on the option passed as parameter.
+
+    Parameters
+    ----------
+    option : str
+        Option to be executed.
+    
+    Returns
+    -------
+    function
+        Function to be executed.
+    """
+
     switcher = {
         '-h': _help,
         '--help': _help,
@@ -35,11 +53,10 @@ def _start():
     """
     Start the server.
     """
-    if subprocess.run('docker container inspect minecraft', stdout=subprocess.DEVNULL) != 0:
+    if subprocess.run('docker container inspect minecraft', stdout=subprocess.DEVNULL, stderr=subprocess.PIPE).returncode != 0:
         print('Server not found. Creating new server.')
         subprocess.run('docker-compose up -d')
-
-    if not (subprocess.check_output('docker container inspect minecraft  -f \'{{.State.Running}}\'')
+    elif not (subprocess.check_output('docker container inspect minecraft  -f \'{{.State.Running}}\'')
                 .strip()
                 .decode()
                 .replace('\'', '') == 'true'):
@@ -54,26 +71,49 @@ def _quit():
     """
     subprocess.run('docker-compose down')
 
-def _options():
-    props = _load_properties('server.properties')
+def _options(file_path='server.properties'):
+    """
+    Change the server properties.
+
+    Parameters
+    ----------
+    file_path : str, optional
+        Path to the server properties file.
+    """
+    if not path.isfile(file_path):
+        print('Server properties not found. Loading default properties.')
+        props = _load_properties('server.properties.default')
+    else:
+        props = _load_properties('server.properties')
+
     print('Current server properties:')
     for key, value in props.items():
         print(f'{key}={value}')
+
     print("Enter the new properties:")
     print("Enter number of options to change (0 to keep current):")
-    n = int(input())
+
+    try:
+        n = int(input())
+    except ValueError:
+        print("Invalid input. Please enter a number.")
+        return
+
     for i in range(n):
         print(f'Enter key {i+1}:')
         key = input()
         print(f'Enter value {i+1}:')
         value = input()
         props[key] = value
+
     with open('server.properties', 'w') as f:
         for key, value in props.items():
             f.write(f'{key}={value}\n')
+
     subprocess.run("docker cp server.properties minecraft:/opt/minecraft/server.properties")
+    
     print("Properties changed successfully.")
-    print("Remember to restart the server for the changes to take effect.")
+    print("Remember to restart/reload the server for the changes to take effect.")
     
 def _console():
     """
