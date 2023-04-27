@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import sys
-import os
 import subprocess
 
 
@@ -36,11 +35,15 @@ def _start():
     """
     Start the server.
     """
+    if subprocess.run('docker container inspect minecraft', stdout=subprocess.DEVNULL) != 0:
+        print('Server not found. Creating new server.')
+        subprocess.run('docker-compose up -d')
+
     if not (subprocess.check_output('docker container inspect minecraft  -f \'{{.State.Running}}\'')
                 .strip()
                 .decode()
                 .replace('\'', '') == 'true'):
-        os.system('docker-compose up -d')
+        subprocess.run('docker-compose up -d')
     else:
         print('Server already running.')
 
@@ -49,10 +52,10 @@ def _quit():
     """
     Stop the server.
     """
-    os.system('docker-compose down')
+    subprocess.run('docker-compose down')
 
 def _options():
-    props = _load_properties('server.properties')
+    props = _load_properties('server.properties.default')
     print('Current server properties:')
     for key, value in props.items():
         print(f'{key}={value}')
@@ -68,7 +71,7 @@ def _options():
     with open('server.properties', 'w') as f:
         for key, value in props.items():
             f.write(f'{key}={value}\n')
-    os.system("docker cp server.properties minecraft:/opt/minecraft/server.properties")
+    subprocess.run("docker cp server.properties minecraft:/opt/minecraft/server.properties")
     print("Properties changed successfully.")
     print("Remember to restart the server for the changes to take effect.")
     
@@ -76,7 +79,7 @@ def _console():
     """
     Open the server console.
     """
-    os.system('docker attach minecraft')
+    subprocess.run('docker attach minecraft')
 
 
 def _load_properties(file_path, sep='=', comment_char='#') -> dict:

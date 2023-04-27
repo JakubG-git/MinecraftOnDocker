@@ -5,7 +5,7 @@ FROM ubuntu
 RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install -y \
-    openjdk-8-jdk \
+    openjdk-19-jre-headless \
     screen 
 
 RUN apt-get install -y wget 
@@ -18,7 +18,7 @@ RUN apt-get install -y \
 # Download and install Minecraft
 
 RUN mkdir -p /opt/minecraft \
-    && wget -O /opt/minecraft/minecraft_server.jar https://launcher.mojang.com/v1/objects/fe123682e9cb30031eae351764f653500b7396c9/server.jar
+    && wget -O /opt/minecraft/minecraft_server.jar https://piston-data.mojang.com/v1/objects/8f3112a1049751cc472ec13e397eade5336ca7ae/server.jar
 
 RUN echo "eula=true" > /opt/minecraft/eula.txt
 
