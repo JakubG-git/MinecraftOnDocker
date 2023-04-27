@@ -55,7 +55,7 @@ def _quit():
     subprocess.run('docker-compose down')
 
 def _options():
-    props = _load_properties('server.properties.default')
+    props = _load_properties('server.properties')
     print('Current server properties:')
     for key, value in props.items():
         print(f'{key}={value}')

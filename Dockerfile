@@ -24,7 +24,7 @@ RUN echo "eula=true" > /opt/minecraft/eula.txt
 
 COPY startServ.sh /opt/minecraft/startServ.sh
 
-COPY server.properties /opt/minecraft/server.properties
+COPY server.properties.default /opt/minecraft/server.properties
 
 WORKDIR /opt/minecraft
 
