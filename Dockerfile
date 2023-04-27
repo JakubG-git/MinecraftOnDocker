@@ -22,9 +22,9 @@ RUN mkdir -p /opt/minecraft \
 
 RUN echo "eula=true" > /opt/minecraft/eula.txt
 
-COPY startServ.sh /opt/minecraft/startServ.sh
+COPY scripts/startServ.sh /opt/minecraft/startServ.sh
 
-COPY server.properties.default /opt/minecraft/server.properties
+COPY files/server.properties.default /opt/minecraft/server.properties
 
 WORKDIR /opt/minecraft
 

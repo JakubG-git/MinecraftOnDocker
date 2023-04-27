@@ -18,7 +18,6 @@ def _help():
         -c, --console: Open the server console.
     If no options are specified, the server will be started.""")
 
-
 def _switch(option: str):
     """
     Switcher function to call the correct function based on the option passed as parameter.
@@ -48,7 +47,6 @@ def _switch(option: str):
     }
     return switcher.get(option)
 
-
 def _start():
     """
     Start the server.
@@ -64,7 +62,6 @@ def _start():
     else:
         print('Server already running.')
 
-
 def _quit():
     """
     Stop the server.
@@ -74,22 +71,27 @@ def _quit():
 def _options(file_path='server.properties'):
     """
     Change the server properties.
-
     Parameters
     ----------
     file_path : str, optional
         Path to the server properties file.
     """
+
+    # Get the absolute path to the server properties file
+    script_dir = path.dirname(__file__)
+    files_dir = path.join(script_dir, '..', 'files')
+    file_path = path.join(files_dir, file_path)
+
+    # Load the properties file
     if not path.isfile(file_path):
         print('Server properties not found. Loading default properties.')
-        props = _load_properties('server.properties.default')
+        props = _load_properties(path.join(files_dir, 'server.properties.default'))
     else:
-        props = _load_properties('server.properties')
+        props = _load_properties(file_path)
 
     print('Current server properties:')
     for key, value in props.items():
         print(f'{key}={value}')
-
     print("Enter the new properties:")
     print("Enter number of options to change (0 to keep current):")
 
@@ -99,6 +101,7 @@ def _options(file_path='server.properties'):
         print("Invalid input. Please enter a number.")
         return
 
+    # Change the properties
     for i in range(n):
         print(f'Enter key {i+1}:')
         key = input()
@@ -106,11 +109,15 @@ def _options(file_path='server.properties'):
         value = input()
         props[key] = value
 
-    with open('server.properties', 'w') as f:
+    final_file_path = path.join(files_dir, 'server.properties')
+    # Save the properties to the file
+    with open(final_file_path, 'w') as f:
         for key, value in props.items():
             f.write(f'{key}={value}\n')
 
-    subprocess.run("docker cp server.properties minecraft:/opt/minecraft/server.properties")
+    # Copy the properties file to the container
+    print("Copying properties to the container...")
+    subprocess.run(f"docker cp {final_file_path} minecraft:/opt/minecraft/server.properties")
     
     print("Properties changed successfully.")
     print("Remember to restart/reload the server for the changes to take effect.")
