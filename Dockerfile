@@ -2,13 +2,17 @@ FROM ubuntu
 
 # Update and install dependencies
 
-EXPOSE 25565
+RUN apt-get update && apt-get upgrade -y
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get install -y \
     openjdk-8-jdk \
-    wget \
-    git \
-    unzip \
+    screen 
+
+RUN apt-get install -y wget 
+
+RUN apt-get install -y \
+    python3 \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install Minecraft
@@ -18,13 +22,16 @@ RUN mkdir -p /opt/minecraft \
 
 RUN echo "eula=true" > /opt/minecraft/eula.txt
 
-RUN echo $(ls -1 /opt/minecraft)
+COPY startServ.sh /opt/minecraft/startServ.sh
+
+COPY server.properties /opt/minecraft/server.properties
 
 WORKDIR /opt/minecraft
 
-ENTRYPOINT ["java", "-jar", "/opt/minecraft/minecraft_server.jar", "nogui"]
+RUN chmod +x startServ.sh
 
-CMD ["-Xmx1024M", "-Xms1024M"]
+ENTRYPOINT ["./startServ.sh"]
+
  
 
 

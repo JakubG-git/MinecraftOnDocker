@@ -5,3 +5,6 @@ services:
     build: .
     ports:
       - "25565:25565"
+    stdin_open: true
+    tty: true
+
