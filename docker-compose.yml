@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  minecraftserver:
+    container_name: minecraft
+    build: .
+    ports:
+      - "25565:25565"
