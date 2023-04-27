@@ -14,6 +14,24 @@ python3 chooseOpts.py
 ```
 
 ## Options
+### docker-compose.yml
+```yaml
+version: "3.9"
+services:
+  minecraftserver:
+    container_name: minecraft
+    build: .
+    ports:
+      - "25565:25565"
+    stdin_open: true
+    tty: true
+    command: -x 1024M -m 812M 
+```
+
+To change the amount of memory allocated to the server, change the values of the `-x` and `-m` flags in the `command` field. The `-x` flag specifies the maximum memory allocation pool for a Java Virtual Machine (JVM), and the `-m` flag specifies the initial memory allocation pool for a JVM. The default values are `-x 1024M -m 812M`.
+
+To change jar file that the server runs, change the value of the `-jar` flag in the `command` field. The default value is `-jar minecraft_server.jar`.
+
 ### startServ.sh
 ```
 Usage: startServ.sh [OPTION]...
