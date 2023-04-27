@@ -155,8 +155,11 @@ def main():
     if n == 1:
         _start()
     elif n == 2:
-        _switch(sys.argv[1])()
-
-
+        try:
+            _switch(sys.argv[1])()
+        except TypeError:
+            print('Invalid option. Use -h or --help for help.')
+    else:
+        print('Invalid number of arguments. Use -h or --help for help.')
 if __name__ == '__main__':
     main()
