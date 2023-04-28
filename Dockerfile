@@ -1,7 +1,6 @@
 FROM ubuntu
 
 # Update and install dependencies
-
 RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install -y \
@@ -16,7 +15,6 @@ RUN apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install Minecraft
-
 RUN mkdir -p /opt/minecraft \
     && wget -O /opt/minecraft/minecraft_server.jar https://piston-data.mojang.com/v1/objects/8f3112a1049751cc472ec13e397eade5336ca7ae/server.jar
 
@@ -29,6 +27,8 @@ COPY files/server.properties.default /opt/minecraft/server.properties
 WORKDIR /opt/minecraft
 
 RUN chmod +x startServ.sh
+
+EXPOSE 25565
 
 ENTRYPOINT ["./startServ.sh"]
 
